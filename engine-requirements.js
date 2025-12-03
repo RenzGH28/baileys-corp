@@ -1,7 +1,6 @@
 let chalk = import("chalk")
 let gradient = import("gradient-string")
 
-
 const major = parseInt(process.versions.node.split('.')[0], 10);
 
 if (major < 20) {
@@ -18,33 +17,34 @@ if (major < 20) {
 
   const glitchChars = ["#", "@", "%", "&", "!", "╳", "▒", "▓", "░"];
 
-  function randomColor() {
+  // Aman dari konflik (tidak bentrok dengan package randomColor)
+  function safeColor() {
     const colors = ["red", "magenta", "yellow", "cyan", "blue", "white"];
-    return chalk[colors[Math.floor(Math.random() * colors.length)]];
+    const pick = colors[Math.floor(Math.random() * colors.length)];
+    return chalk[pick];
   }
 
   let frame = 0;
 
   const glitchInterval = setInterval(() => {
     console.clear();
-    console.log(""); // spacing
+    console.log("");
 
     banner.forEach((line, index) => {
       let glitched = line.split("");
 
-      // Tambahkan glitch random
+      // Tambah glitch random
       if (Math.random() < 0.3) {
         const pos = Math.floor(Math.random() * glitched.length);
         glitched[pos] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
       }
 
-      // Efek shift kiri-kanan
+      // Distorsi geser (wave)
       const shift = Math.floor(Math.sin(frame / 2 + index) * 3);
-      const shiftedLine =
-        (shift > 0 ? " ".repeat(shift) : "") + glitched.join("");
+      const shiftedLine = (shift > 0 ? " ".repeat(shift) : "") + glitched.join("");
 
-      // Warna acak untuk setiap baris
-      const colored = randomColor()(shiftedLine);
+      // Warna glitch acak
+      const colored = safeColor()(shiftedLine);
       console.log(colored);
     });
 
@@ -75,6 +75,7 @@ if (major < 20) {
 
   }, 90);
 
+  // Stop glitch + exit process
   setTimeout(() => {
     clearInterval(glitchInterval);
     process.exit(1);
